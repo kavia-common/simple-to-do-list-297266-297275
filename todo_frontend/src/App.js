@@ -43,7 +43,11 @@ function App() {
 
         <footer className="footer">
           <small>
-            API: <code>{process.env.REACT_APP_API_BASE || process.env.REACT_APP_BACKEND_URL || "/api"}</code>
+            API:{" "}
+            <code>
+              {process.env.REACT_APP_API_BASE
+                || (process.env.REACT_APP_BACKEND_URL ? `${String(process.env.REACT_APP_BACKEND_URL).replace(/\/+$/,"")}/api` : "http://localhost:4000/api")}
+            </code>
           </small>
         </footer>
       </main>

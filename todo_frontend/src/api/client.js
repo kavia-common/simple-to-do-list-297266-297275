@@ -3,31 +3,28 @@
 //
 /* eslint-disable no-undef */
 
-// PUBLIC_INTERFACE
+ // PUBLIC_INTERFACE
 export function getApiBaseUrl() {
   /**
    * Determine the API base URL based on environment variables.
    * Priority:
-   * - REACT_APP_API_BASE
-   * - REACT_APP_BACKEND_URL
-   * - If running in same origin, default to empty (relative)
-   * - Fallback to http://localhost:4000
+   * 1) REACT_APP_API_BASE
+   * 2) REACT_APP_BACKEND_URL + '/api'
+   * 3) 'http://localhost:4000/api'
    */
-  const envBase =
-    process.env.REACT_APP_API_BASE ||
-    process.env.REACT_APP_BACKEND_URL ||
-    "";
-
-  if (envBase) return envBase.replace(/\/+$/, "");
-
-  try {
-    // If frontend and backend are served from same domain with path /api
-    const sameOriginApi = "/api";
-    return sameOriginApi;
-  } catch (e) {
-    // Fallback for non-browser envs
+  const apiBase = (process.env.REACT_APP_API_BASE || "").trim();
+  if (apiBase) {
+    return apiBase.replace(/\/+$/, "");
   }
-  return "http://localhost:4000";
+
+  const backendUrl = (process.env.REACT_APP_BACKEND_URL || "").trim();
+  if (backendUrl) {
+    const normalized = backendUrl.replace(/\/+$/, "");
+    return `${normalized}/api`;
+  }
+
+  // Final fallback for local dev
+  return "http://localhost:4000/api";
 }
 
 // PUBLIC_INTERFACE
@@ -39,10 +36,7 @@ export async function apiRequest(path, options = {}) {
    * - Throws on HTTP errors with structured error
    */
   const base = getApiBaseUrl();
-  const url =
-    (base.startsWith("http") ? base : "").concat(
-      base.startsWith("http") ? path : `${base}${path}`
-    );
+  const url = base.replace(/\/+$/, "") + (path.startsWith("/") ? path : `/${path}`);
 
   const headers = {
     "Content-Type": "application/json",

@@ -33,17 +33,16 @@ const { initDatabase, getAllTasks, createTask, updateTask, deleteTask } = requir
 
 // Helpers
 function getAllowedOrigin() {
-  // Prefer explicit frontend URL, then BACKEND_URL (not typical), else wildcard during dev
-  const fromFrontend = process.env.REACT_APP_FRONTEND_URL;
-  if (fromFrontend && /^https?:\/\//i.test(fromFrontend)) return fromFrontend;
+  // Prefer FRONTEND_URL, then REACT_APP_FRONTEND_URL, then REACT_APP_BACKEND_URL (not typical), else localhost:3000
+  const frontUrl = process.env.FRONTEND_URL || process.env.REACT_APP_FRONTEND_URL;
+  if (frontUrl && /^https?:\/\//i.test(frontUrl)) return frontUrl;
   const fromBackendUrl = process.env.REACT_APP_BACKEND_URL;
   if (fromBackendUrl && /^https?:\/\//i.test(fromBackendUrl)) return fromBackendUrl;
-  // In dev, allow http://localhost:3000 by default as CRA dev server
   return "http://localhost:3000";
 }
 
 function getHealthPath() {
-  return process.env.REACT_APP_HEALTHCHECK_PATH || "/healthz";
+  return process.env.HEALTHCHECK_PATH || process.env.REACT_APP_HEALTHCHECK_PATH || "/healthz";
 }
 
 // PUBLIC_INTERFACE
@@ -52,13 +51,20 @@ function createApp() {
   const app = express();
 
   // Trust proxy if enabled for deployments behind reverse proxies
-  if ((process.env.REACT_APP_TRUST_PROXY || "").toLowerCase() === "true") {
+  if (
+    (process.env.TRUST_PROXY || process.env.REACT_APP_TRUST_PROXY || "")
+      .toString()
+      .toLowerCase() === "true"
+  ) {
     app.set("trust proxy", 1);
   }
 
   // Logging
   const nodeEnv = (process.env.REACT_APP_NODE_ENV || process.env.NODE_ENV || "development").toLowerCase();
-  const logLevel = process.env.REACT_APP_LOG_LEVEL || (nodeEnv === "production" ? "tiny" : "dev");
+  const logLevel =
+    process.env.LOG_LEVEL ||
+    process.env.REACT_APP_LOG_LEVEL ||
+    (nodeEnv === "production" ? "tiny" : "dev");
   app.use(morgan(logLevel));
 
   // CORS
