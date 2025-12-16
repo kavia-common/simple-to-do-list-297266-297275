@@ -1,82 +1,44 @@
-# Lightweight React Template for KAVIA
+# To Do Frontend (React)
 
-This project provides a minimal React template with a clean, modern UI and minimal dependencies.
+A modern, light-themed React To Do application with persistence via REST API.
 
 ## Features
 
-- **Lightweight**: No heavy UI frameworks - uses only vanilla CSS and React
-- **Modern UI**: Clean, responsive design with KAVIA brand styling
-- **Fast**: Minimal dependencies for quick loading times
-- **Simple**: Easy to understand and modify
+- Add, edit (double-click), delete, mark complete
+- Optimistic UI for fast interactions
+- Light theme with modern styling
+- Environment-based API base URL selection
 
-## Getting Started
+## Running
 
-In the project directory, you can run:
+- `npm start` to run the dev server
+- `npm run build` for production build
+- `npm test` to run tests
 
-### `npm start`
+## Environment variables
 
-Runs the app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Configure API base URL using one of:
 
-### `npm test`
+- `REACT_APP_API_BASE`
+- `REACT_APP_BACKEND_URL`
 
-Launches the test runner in interactive watch mode.
+If both are absent, the app defaults to `/api` (same origin) and finally `http://localhost:4000`.
 
-### `npm run build`
+Example `.env`:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-## Customization
-
-### Colors
-
-The main brand colors are defined as CSS variables in `src/App.css`:
-
-```css
-:root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
-}
+```
+REACT_APP_API_BASE=http://localhost:4000
+REACT_APP_NODE_ENV=development
+REACT_APP_PORT=3000
 ```
 
-### Components
+## API Contract
 
-This template uses pure HTML/CSS components instead of a UI framework. You can find component styles in `src/App.css`. 
+The frontend expects a REST API with the following endpoints:
 
-Common components include:
-- Buttons (`.btn`, `.btn-large`)
-- Container (`.container`)
-- Navigation (`.navbar`)
-- Typography (`.title`, `.subtitle`, `.description`)
+- `GET /todos` -> `[{ id: string|number, title: string, completed: boolean }]`
+- `POST /todos` with body `{ title: string, completed?: boolean }` -> created todo
+- `PUT /todos/:id` with full todo object -> updated todo
+- `DELETE /todos/:id` -> 204 No Content
 
-## Learn More
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Ensure CORS is configured if backend runs on a different origin during development.
